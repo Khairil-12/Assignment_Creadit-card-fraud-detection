@@ -13,10 +13,12 @@ Notebook: `notebook/creditcard_validation.ipynb`
 ## Current State
 
 ### Files
+
 - `creditcard_clean.csv` — cleaned dataset (deduplicated from original 284,807 rows)
 - `notebook/creditcard_validation.ipynb` — validation & verification notebook
 
 ### Notebook Contents (v1)
+
 1. Context + relation to research paper
 2. Column descriptions table (all 31 columns named)
 3. 12 validation checks vs Kaggle spec
@@ -25,20 +27,21 @@ Notebook: `notebook/creditcard_validation.ipynb`
 6. Save outputs (semicolon-delimited, UTF-8 BOM)
 
 ### Validation Results
-| Check | Expected | Result |
-|-------|----------|--------|
-| Total rows | 284,807 | PASS |
-| Total columns | 31 | PASS |
-| Missing values | 0 | PASS |
-| Fraud count | 492 | PASS |
-| Legitimate count | 284,315 | PASS |
-| Fraud ratio | ~0.172% | PASS |
-| Time min | 0 | PASS |
-| Time max | <=172,800s | PASS |
-| Negative Amount | 0 | PASS |
-| Class values | only 0/1 | PASS |
-| V1-V28 mean | ~0.0 | PASS |
-| Duplicate rows | 0 (ideal) | WARN — 1,081 removed |
+
+| Check            | Expected   | Result               |
+| ---------------- | ---------- | -------------------- |
+| Total rows       | 284,807    | PASS                 |
+| Total columns    | 31         | PASS                 |
+| Missing values   | 0          | PASS                 |
+| Fraud count      | 492        | PASS                 |
+| Legitimate count | 284,315    | PASS                 |
+| Fraud ratio      | ~0.172%    | PASS                 |
+| Time min         | 0          | PASS                 |
+| Time max         | <=172,800s | PASS                 |
+| Negative Amount  | 0          | PASS                 |
+| Class values     | only 0/1   | PASS                 |
+| V1-V28 mean      | ~0.0       | PASS                 |
+| Duplicate rows   | 0 (ideal)  | WARN — 1,081 removed |
 
 ---
 
@@ -52,7 +55,7 @@ Notebook: `notebook/creditcard_validation.ipynb`
 - [ ] Train a baseline Random Forest model
 -->
 
-- 
+-
 
 ---
 
@@ -64,13 +67,14 @@ Notebook: `notebook/creditcard_validation.ipynb`
 ## 2.1 Objective
 
 Produce a single trustworthy, analysis-ready dataset derived from `creditcard_clean.csv` by:
+
 - eliminating structural defects (duplicates, wrong dtypes, malformed values),
 - documenting every removal, replacement, or transformation with an explicit reason,
 - preserving all signal relevant to fraud detection, especially the minority class.
 
 **Guiding rule:** unusual is not the same as wrong. No row, column, or value may be dropped,
 replaced, or transformed without a written justification recorded in the cleaning log
-(`docs/cleaning_decisions.md`). The reason must be recorded *before* the operation, not reconstructed after.
+(`docs/cleaning_decisions.md`). The reason must be recorded _before_ the operation, not reconstructed after.
 
 Deliverable of this stage: `data/creditcard_analysis_ready.csv` + `docs/cleaning_decisions.md`.
 
@@ -78,25 +82,25 @@ Deliverable of this stage: `data/creditcard_analysis_ready.csv` + `docs/cleaning
 
 These values are measured from the current file and are the reference point for every before/after comparison.
 
-| Property | Verified value |
-|---|---|
-| Shape | 283,726 rows × 31 columns |
-| Columns | `Time`, `V1`–`V28`, `Amount`, `Class` |
-| dtypes | `Time`, `V1`–`V28`, `Amount` → float64; `Class` → int64 |
-| Missing values | 0 (all columns) |
-| Exact duplicate rows | 0 |
-| Rows duplicated on `V1`–`V28` (+`Amount`) | 8,063 rows / 4,383 groups (12,446 rows involved) |
-| `Class` = 0 (legitimate) | 283,253 |
-| `Class` = 1 (fraud) | 473 |
-| Fraud ratio | 0.16671% |
-| `Time` range | 0 → 172,792 s (≈47.998 h), integer-valued, 124,592 unique values |
-| `Amount` range | 0 → 25,691.16; mean 88.47; median 22.00; std 250.40; Q1 5.60; Q3 77.51; skew 16.98 |
-| `Amount` = 0 rows | 1,808 (1,783 legitimate, 25 fraud) |
-| `Amount` < 0 rows | 0 |
-| `V1`–`V28` means | all |mean| < 0.006 (PCA-centered) |
-| `V1`–`V28` std | 1.948 (`V1`) down to 0.328 (`V28`) — **not** unit-scaled |
-| Native categorical columns | none; `Class` is the only discrete variable |
-| Original file | 284,807 rows → 1,081 exact duplicates already removed (19 fraud, 1,062 legitimate) |
+| Property                                  | Verified value                                                                     |
+| ----------------------------------------- | ---------------------------------------------------------------------------------- | ---- | ---------------------- |
+| Shape                                     | 283,726 rows × 31 columns                                                          |
+| Columns                                   | `Time`, `V1`–`V28`, `Amount`, `Class`                                              |
+| dtypes                                    | `Time`, `V1`–`V28`, `Amount` → float64; `Class` → int64                            |
+| Missing values                            | 0 (all columns)                                                                    |
+| Exact duplicate rows                      | 0                                                                                  |
+| Rows duplicated on `V1`–`V28` (+`Amount`) | 8,063 rows / 4,383 groups (12,446 rows involved)                                   |
+| `Class` = 0 (legitimate)                  | 283,253                                                                            |
+| `Class` = 1 (fraud)                       | 473                                                                                |
+| Fraud ratio                               | 0.16671%                                                                           |
+| `Time` range                              | 0 → 172,792 s (≈47.998 h), integer-valued, 124,592 unique values                   |
+| `Amount` range                            | 0 → 25,691.16; mean 88.47; median 22.00; std 250.40; Q1 5.60; Q3 77.51; skew 16.98 |
+| `Amount` = 0 rows                         | 1,808 (1,783 legitimate, 25 fraud)                                                 |
+| `Amount` < 0 rows                         | 0                                                                                  |
+| `V1`–`V28` means                          | all                                                                                | mean | < 0.006 (PCA-centered) |
+| `V1`–`V28` std                            | 1.948 (`V1`) down to 0.328 (`V28`) — **not** unit-scaled                           |
+| Native categorical columns                | none; `Class` is the only discrete variable                                        |
+| Original file                             | 284,807 rows → 1,081 exact duplicates already removed (19 fraud, 1,062 legitimate) |
 
 ## 2.3 Cleaning Steps
 
@@ -117,9 +121,9 @@ Each step below specifies: what is checked, why, how it is handled, the disposit
   1. exact full-row duplicates (`df.duplicated()`) — verified 0;
   2. duplicates on `V1`–`V28` only — verified 8,063 rows in 4,383 groups;
   3. duplicates on `V1`–`V28` + `Amount` — verified 8,063 rows (identical to level 2, i.e. matched groups also share `Amount`).
-- **Why:** exact duplicates inflate sample weight and leak across a train/test split. The `V`-level duplicates need separate scrutiny: they are *not* exact duplicates — within every one of the 4,383 groups the `Time` value differs (observed group time-spans of 2 s up to 77 s), while `Amount`, `Class`, and all 28 PCA components are identical. Two readings are possible: (a) the same underlying transaction recorded more than once with a differing timestamp, or (b) genuinely distinct transactions whose PCA projection coincides. Collisions in 28 PCA dimensions are implausible, so (a) is the working hypothesis — but it must be confirmed, not assumed.
+- **Why:** exact duplicates inflate sample weight and leak across a train/test split. The `V`-level duplicates need separate scrutiny: they are _not_ exact duplicates — within every one of the 4,383 groups the `Time` value differs (observed group time-spans of 2 s up to 77 s), while `Amount`, `Class`, and all 28 PCA components are identical. Two readings are possible: (a) the same underlying transaction recorded more than once with a differing timestamp, or (b) genuinely distinct transactions whose PCA projection coincides. Collisions in 28 PCA dimensions are implausible, so (a) is the working hypothesis — but it must be confirmed, not assumed.
 - **Handle:** quantify both levels; inspect the group structure (`Time.nunique()`, `Class.nunique()`, `Amount.nunique()` per group — verified: 1 unique `Class` and 1 unique `Amount` per group); decide per level.
-- **Disposition:** exact duplicates → **remove** (already done). `V`-level duplicate groups → **retain pending analysis**: do not drop yet. Because all rows in a group carry identical `Class` and `Amount`, removing the extra rows would not rebalance classes or bias `Amount`, but it *would* delete legitimate-looking volume; and the group members carry different `Time` values, which is the only differing signal. Log the group count, the removed-if-any count, and the reasoning. If resolution is adopted, record whether the kept row is the first, last, or median-`Time` member.
+- **Disposition:** exact duplicates → **remove** (already done). `V`-level duplicate groups → **retain pending analysis**: do not drop yet. Because all rows in a group carry identical `Class` and `Amount`, removing the extra rows would not rebalance classes or bias `Amount`, but it _would_ delete legitimate-looking volume; and the group members carry different `Time` values, which is the only differing signal. Log the group count, the removed-if-any count, and the reasoning. If resolution is adopted, record whether the kept row is the first, last, or median-`Time` member.
 - **Impact:** deduplicating the group level would reduce the dataset by up to 8,063 rows (~2.8%) and would need a re-stated fraud ratio; leaving them in risks the same transaction appearing in both train and test, which inflates reported performance at the modeling stage. This trade-off must be resolved and written down, not silently chosen.
 
 ### C3 — Data type validation and conversion
@@ -143,21 +147,21 @@ Each step below specifies: what is checked, why, how it is handled, the disposit
 - **Check:** the dataset has no native categorical string columns. The only discrete variables are `Class` (verified: exactly {0, 1}) and `Time` (a continuous counter, not a category).
 - **Why:** the request for categorical normalization applies to derived categoricals created during EDA (time-of-day bucket, amount band), not to raw columns; normalizing at the raw stage would be inventing structure.
 - **Handle:** confirm `Class` domain is exactly {0, 1} with no other value; confirm no column is object/string dtype.
-- **Disposition:** **retain** all columns as-is. `Class` is **transformed** only into a boolean/int8 representation if needed and the mapping `1 = fraud, 0 = legitimate` is preserved exactly. Any *derived* categorical (day part, amount band) must be created in the EDA stage with its bin edges and label order documented, never here.
+- **Disposition:** **retain** all columns as-is. `Class` is **transformed** only into a boolean/int8 representation if needed and the mapping `1 = fraud, 0 = legitimate` is preserved exactly. Any _derived_ categorical (day part, amount band) must be created in the EDA stage with its bin edges and label order documented, never here.
 - **Impact:** guaranteeing the label domain prevents a mislabeled class from silently entering the target analysis; no data changes.
 
 ### C6 — Numerical data validation
 
 - **Check:** for `Amount` and each of `V1`–`V28`: min, max, mean, std, presence of negative values, presence of exact zeros, and count of infinite values.
-- **Why:** `Amount` is a monetary value with a hard lower bound of 0 (verified min 0.0, no negatives). The `V` columns are PCA outputs and legitimately span negative values, so a negative `V` value is *not* an error — this distinction must be explicit so no cleaning step "fixes" PCA components.
-- **Handle:** `Amount`: assert `min >= 0`, assert no `inf`. `V1`–`V28`: record observed ranges (e.g. `V1` −56.41 → 2.45, `V5` −113.74 → 34.80, `V7` −43.56 → 120.59) as *expected* PCA spread, assert no `inf`/`NaN`.
+- **Why:** `Amount` is a monetary value with a hard lower bound of 0 (verified min 0.0, no negatives). The `V` columns are PCA outputs and legitimately span negative values, so a negative `V` value is _not_ an error — this distinction must be explicit so no cleaning step "fixes" PCA components.
+- **Handle:** `Amount`: assert `min >= 0`, assert no `inf`. `V1`–`V28`: record observed ranges (e.g. `V1` −56.41 → 2.45, `V5` −113.74 → 34.80, `V7` −43.56 → 120.59) as _expected_ PCA spread, assert no `inf`/`NaN`.
 - **Disposition:** **retain** everything. Verified: `Amount` min 0 with 1,808 exact-zero rows and 0 negative rows; no infinities expected — confirm and log. Zero-amount transactions are **retained** (see C10).
-- **Impact:** establishes the numeric floor/ceiling so that the outlier step (C7) can distinguish *statistical* extremes from *invalid* values.
+- **Impact:** establishes the numeric floor/ceiling so that the outlier step (C7) can distinguish _statistical_ extremes from _invalid_ values.
 
 ### C7 — Outlier detection and handling
 
 - **Check:** IQR rule (Q1 − 1.5·IQR, Q3 + 1.5·IQR) on every numeric column, plus a robust z-score / MAD cross-check on `Amount`. Report outlier counts per column, not a single global number.
-- **Why:** measured IQR outlier counts are high and uneven — `Amount` 31,685 rows (11.2%), `V27` 38,799, `V28` 30,094, `V20` 27,553, `V8` 23,904, `V6` 22,886, down to `V11` 735 and `Time` 0. High rates on PCA components are *expected* for a centered, non-normal projection; treating them as errors would delete real fraud signal.
+- **Why:** measured IQR outlier counts are high and uneven — `Amount` 31,685 rows (11.2%), `V27` 38,799, `V28` 30,094, `V20` 27,553, `V8` 23,904, `V6` 22,886, down to `V11` 735 and `Time` 0. High rates on PCA components are _expected_ for a centered, non-normal projection; treating them as errors would delete real fraud signal.
 - **Handle:** compute per-column IQR bounds and outlier counts; for `Class == 1` rows, compare outlier rates against `Class == 0` rows to test whether "outlier" is informative rather than defective. Also check `Amount` with a log scale and MAD z-score to confirm the same rows flag under both methods.
 - **Disposition:** **retain all outliers.** No winsorization, no trimming, no removal at this stage. Rationale: `Amount` is right-skewed (skew 16.98, median 22.00 vs mean 88.47) and its tail contains the highest-value fraud cases (fraud `Amount` reaches 2,125.87 with median only 9.82). Outlier treatment belongs to the modeling stage as an explicit, tested decision — not to cleaning. If any outlier is later removed, the record must state the column, the bound, the row count, and the business reason.
 - **Impact:** retaining outliers preserves the fraud signal; documenting the rates prevents a later reader from assuming the data was cleaned of extremes.
@@ -190,7 +194,7 @@ These follow from the properties measured above and have no generic analogue.
 - **C10.1 — Zero-amount transactions.** 1,808 rows have `Amount == 0` (1,783 legitimate, 25 fraud). **Retain.** Justification: 25 of them are labeled fraud, i.e. a zero-amount transaction is a real fraud pattern in this data, not a missing-value placeholder. Removing them would delete confirmed positives. The zero-amount count must be reported in the data quality summary so that any later amount-based model documents how it treats them.
 - **C10.2 — PCA components are not standardized.** `V1`–`V28` have unit-centered means but non-unit std (1.948 down to 0.328). **Retain as-is; document.** Do not rescale during cleaning — rescaling is a modeling-stage decision that changes the meaning of the components and must be justified there. The non-unit std is recorded now so that no later reader assumes the components are pre-scaled.
 - **C10.3 — `Amount` skew.** skew 16.98 with median 22.00 vs mean 88.47. **Retain raw; document.** Do not apply a log transform during cleaning. The transformation, if used, must be applied at modeling time and evaluated, because the fraud subpopulation has a very different amount distribution (fraud median 9.82, mean 123.87, max 2,125.87) and a naive log transform changes the shape of both classes differently.
-- **C10.4 — Deduplication already applied is not reversible in the current file.** The original 284,807 rows contained 1,081 exact duplicates; the current file has 283,726. Consequence: the delivered fraud count is 473, not the documented Kaggle figure of 492 — 19 fraud rows were removed as duplicates. **Retain the current file**; document the 19-row fraud reduction explicitly in the data quality summary, and note that any figure quoted from the literature (492 frauds, 284,807 rows, 0.172%) refers to the *pre-deduplication* file and is not directly comparable. This discrepancy must be visible to whoever reads the EDA results.
+- **C10.4 — Deduplication already applied is not reversible in the current file.** The original 284,807 rows contained 1,081 exact duplicates; the current file has 283,726. Consequence: the delivered fraud count is 473, not the documented Kaggle figure of 492 — 19 fraud rows were removed as duplicates. **Retain the current file**; document the 19-row fraud reduction explicitly in the data quality summary, and note that any figure quoted from the literature (492 frauds, 284,807 rows, 0.172%) refers to the _pre-deduplication_ file and is not directly comparable. This discrepancy must be visible to whoever reads the EDA results.
 - **C10.5 — Grouped `V`-level duplicates are unresolved.** Per C2, 4,383 groups of rows share identical `V1`–`V28`, identical `Amount`, and identical `Class`, differing only in `Time`. **Retain pending a documented decision.** The decision and its rationale must be written into `docs/cleaning_decisions.md` before the modeling stage, because it determines whether a time-based or a group-aware train/test split is required.
 - **C10.6 — Class imbalance is extreme and must not be corrected in cleaning.** 473 fraud vs 283,253 legitimate = 0.16671%. **Retain the imbalance.** No resampling, no SMOTE, no undersampling, no class weighting during cleaning — those are modeling-stage interventions that need their own validation. The cleaned dataset must preserve the natural class ratio so that the imbalance itself is measurable in EDA.
 
@@ -198,15 +202,15 @@ These follow from the properties measured above and have no generic analogue.
 
 `docs/cleaning_decisions.md` must contain one entry per executed operation with these fields:
 
-| Field | Content |
-|---|---|
-| Step ID | C1–C10.x |
-| Operation | what was done |
-| Rows/columns affected | exact counts, before → after |
-| Rationale | why this operation was necessary, in terms of the verified property that motivated it |
-| Evidence | the command/query result that triggered the decision |
-| Reversibility | whether the original data can be recovered |
-| Impact on analysis | which downstream statistic is affected, and how |
+| Field                 | Content                                                                               |
+| --------------------- | ------------------------------------------------------------------------------------- |
+| Step ID               | C1–C10.x                                                                              |
+| Operation             | what was done                                                                         |
+| Rows/columns affected | exact counts, before → after                                                          |
+| Rationale             | why this operation was necessary, in terms of the verified property that motivated it |
+| Evidence              | the command/query result that triggered the decision                                  |
+| Reversibility         | whether the original data can be recovered                                            |
+| Impact on analysis    | which downstream statistic is affected, and how                                       |
 
 ---
 
@@ -250,25 +254,29 @@ For each of the 30 columns report: mean, median, standard deviation, min, max, Q
 ## 3.4 Bivariate Analysis
 
 ### Numerical vs numerical
+
 - **Scatter plots:** `Time` vs `Amount`; selected `V` vs `V` for components that the correlation step (3.5) identifies as related; `Amount` vs each `V` component where a relationship is hypothesized. With 283k points, use sampling plus alpha transparency or hexbin — an unreadable dense scatter does not count as a visualization.
 - **Correlation analysis:** Pearson correlation between all numeric pairs; report the top absolute correlations as a ranked table, not a bare matrix. If any pair exceeds |r| > 0.9, list it in the cleaning log as a redundancy candidate (C8) rather than dropping it in EDA.
 - **Class-conditional correlation:** compare correlations computed on `Class == 1` rows against `Class == 0` rows. A relationship that exists only inside the fraud subpopulation is a candidate signal and must be called out separately.
 
 ### Categorical vs numerical
+
 `Class` (binary) vs each of `Time`, `Amount`, `V1`–`V28`:
-- **Boxplots:** one boxplot per numeric column, split by `Class`. For `Amount`, the class-conditional comparison is a required headline result: verified pre-cleaning medians are 22.00 (legitimate) vs 9.82 (fraud), and means 88.41 vs 123.87 — the mean and median disagree in direction, so the finding must be stated as "fraud transactions have a *lower* median but a *higher* mean amount, indicating a heavier tail", not as "fraud has higher amounts".
+
+- **Boxplots:** one boxplot per numeric column, split by `Class`. For `Amount`, the class-conditional comparison is a required headline result: verified pre-cleaning medians are 22.00 (legitimate) vs 9.82 (fraud), and means 88.41 vs 123.87 — the mean and median disagree in direction, so the finding must be stated as "fraud transactions have a _lower_ median but a _higher_ mean amount, indicating a heavier tail", not as "fraud has higher amounts".
 - **Group statistics table:** for every numeric column, per-class count, mean, median, std, min, max, and the difference between classes. This table is a required deliverable.
 - **Bar charts:** mean/median `Amount` by `Class`; per-hour transaction count by `Class` after deriving an hour-of-day variable from `Time`.
 - **Time-bucketed counts:** `Time` spans 47.998 h. Bucket into hours and plot counts by class, to test whether fraud is concentrated in a specific part of the two-day window.
 
 ### Categorical vs categorical
+
 - Only one discrete variable exists (`Class`), so a raw contingency table is not possible. **State this explicitly** rather than fabricating a pair. If a derived categorical is created (time-of-day bucket, amount band), cross it with `Class` in a contingency table with row percentages and a bar/mosaic chart.
 
 ## 3.5 Multivariate Analysis
 
 - **Correlation matrix:** 30×30 over `Time`, `V1`–`V28`, `Amount`.
 - **Heatmap:** annotated or colorbar-labelled, with a stated scale and sign convention. If the matrix is too dense to read at 30×30, split it into blocks (e.g. `V1`–`V14`, `V15`–`V28`, plus `Time`/`Amount`) and say so.
-- **PCA context:** the components are already orthogonal by construction, so near-zero correlations are expected and are *not* a finding. State this so that the heatmap is not misread. Any non-trivial correlation between two components indicates something about the preprocessing, not a business relationship.
+- **PCA context:** the components are already orthogonal by construction, so near-zero correlations are expected and are _not_ a finding. State this so that the heatmap is not misread. Any non-trivial correlation between two components indicates something about the preprocessing, not a business relationship.
 - **Class-conditional multivariate views:** correlation heatmap for `Class == 1` against `Class == 0`; a 2D projection (e.g. selected pair of components, or a new PCA for visualization only) with points colored by `Class` and sampled to remain readable.
 - **Pattern identification:** report which components show the largest class-conditional separation, with the numeric evidence (e.g. mean shift, overlap width, or a per-class distribution comparison per component). Rank them; do not assert separation without a number.
 
@@ -307,36 +315,19 @@ Every chart produced in this stage must satisfy all of the following:
 These are adapted to this dataset's measured properties, not generic prompts.
 
 **Structure**
+
 1. What is the exact shape and dtype profile of the cleaned dataset, and does it match the Stage 2 baseline of 283,726 × 31?
 2. Which columns are continuous (`Time`, `V1`–`V28`, `Amount`) and which are discrete (`Class` only)? Are there any derived categoricals, and how were their bins chosen?
 
-**Data quality**
-3. Are there any missing values or inf values in the cleaned file, and does the count still read 0?
-4. Do the 4,383 grouped `V`-level duplicate rows (differing only in `Time`) materially change any distribution when excluded? Quantify the answer instead of assuming it.
-5. How many rows sit outside the IQR bounds per column, and are those rows concentrated in `Class == 1` or `Class == 0`? (Expected scale: `Amount` ≈ 31,685 rows, `V27` ≈ 38,799, `V11` ≈ 735, `Time` = 0 — verify on the cleaned file.)
+**Data quality** 3. Are there any missing values or inf values in the cleaned file, and does the count still read 0? 4. Do the 4,383 grouped `V`-level duplicate rows (differing only in `Time`) materially change any distribution when excluded? Quantify the answer instead of assuming it. 5. How many rows sit outside the IQR bounds per column, and are those rows concentrated in `Class == 1` or `Class == 0`? (Expected scale: `Amount` ≈ 31,685 rows, `V27` ≈ 38,799, `V11` ≈ 735, `Time` = 0 — verify on the cleaned file.)
 
-**Univariate**
-6. Which columns have the highest variability? Report by standard deviation and by coefficient of variation, noting that `Amount` (std 250.40) and `Time` (std 47,481 s) are on fundamentally different scales from the PCA components.
-7. What is the shape of the `Amount` distribution, and what does skew 16.98 with median 22.00 vs mean 88.47 imply about how many large transactions exist?
-8. Is `Time` uniformly spread across the 47.998-hour window, or are there gaps and bursts?
-9. Do the 28 PCA components all look roughly Gaussian, or do some deviate? Which ones, and how?
+**Univariate** 6. Which columns have the highest variability? Report by standard deviation and by coefficient of variation, noting that `Amount` (std 250.40) and `Time` (std 47,481 s) are on fundamentally different scales from the PCA components. 7. What is the shape of the `Amount` distribution, and what does skew 16.98 with median 22.00 vs mean 88.47 imply about how many large transactions exist? 8. Is `Time` uniformly spread across the 47.998-hour window, or are there gaps and bursts? 9. Do the 28 PCA components all look roughly Gaussian, or do some deviate? Which ones, and how?
 
-**Bivariate**
-10. Is there a relationship between `Time` and `Amount`? Does transaction size vary across the two-day window?
-11. Do fraud transactions cluster at particular times within the window?
-12. How does `Amount` differ between classes when compared by median against by mean, and what does the discrepancy (fraud median 9.82 vs mean 123.87) reveal about the fraud amount tail?
-13. Do the 1,808 zero-amount rows (`Amount == 0`) behave differently from positive-amount rows within each class?
+**Bivariate** 10. Is there a relationship between `Time` and `Amount`? Does transaction size vary across the two-day window? 11. Do fraud transactions cluster at particular times within the window? 12. How does `Amount` differ between classes when compared by median against by mean, and what does the discrepancy (fraud median 9.82 vs mean 123.87) reveal about the fraud amount tail? 13. Do the 1,808 zero-amount rows (`Amount == 0`) behave differently from positive-amount rows within each class?
 
-**Multivariate**
-14. Which pairs of columns have a non-trivial correlation, given that the PCA components are orthogonal by construction? Any such pair is a preprocessing artifact and must be flagged, not interpreted as a business relationship.
-15. Which components separate the two classes most strongly, ranked with numeric evidence?
-16. Does the correlation structure differ between the fraud and legitimate subpopulations?
+**Multivariate** 14. Which pairs of columns have a non-trivial correlation, given that the PCA components are orthogonal by construction? Any such pair is a preprocessing artifact and must be flagged, not interpreted as a business relationship. 15. Which components separate the two classes most strongly, ranked with numeric evidence? 16. Does the correlation structure differ between the fraud and legitimate subpopulations?
 
-**Target**
-17. What is the exact class ratio in the cleaned file, and how far is it from 1:1? (Baseline: 473 : 283,253, ratio ≈ 1:599, fraud 0.16671%.)
-18. Is accuracy a viable metric for this target? (No — state the 99.833% majority-class baseline explicitly.)
-19. Is there duplicate-based or temporal target leakage risk? Report the row counts for each risk (8,063 rows in 4,383 groups for duplicate risk; the full 283k rows for temporal risk) and the mitigation each requires.
-20. Which features appear potentially important for further analysis or modeling, ranked by evidence, and which are candidates for exclusion — with the evidence for each?
+**Target** 17. What is the exact class ratio in the cleaned file, and how far is it from 1:1? (Baseline: 473 : 283,253, ratio ≈ 1:599, fraud 0.16671%.) 18. Is accuracy a viable metric for this target? (No — state the 99.833% majority-class baseline explicitly.) 19. Is there duplicate-based or temporal target leakage risk? Report the row counts for each risk (8,063 rows in 4,383 groups for duplicate risk; the full 283k rows for temporal risk) and the mitigation each requires. 20. Which features appear potentially important for further analysis or modeling, ranked by evidence, and which are candidates for exclusion — with the evidence for each?
 
 ## 3.9 Expected Outputs
 
@@ -365,3 +356,4 @@ Findings that emerge here are **observations**, not conclusions about model perf
 - Notebooks go in `notebook/`
 - CSV data files stay in project root (`P2/`)
 - Notebook reads data via relative path `../creditcard_clean.csv`
+  github repository: https://github.com/Khairil-12/Assignment_Creadit-card-fraud-detection.git
